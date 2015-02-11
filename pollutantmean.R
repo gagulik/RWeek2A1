@@ -30,11 +30,13 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
                 # Filter-out NA values
                 Poll <- Data[[pollutant]] # get pollutant as vector
                 Poll2 <- Poll[!is.na(Poll)] # remove NA values
-                #CleanData <- Data[!is.na(Data[pollutant]),]
+#                CleanData <- Data[!is.na(Data[pollutant]),]
+                CleanData <- Data[!is.na(Data["sulfate"]),]
+                CleanData <- CleanData[!is.na(CleanData["nitrate"]),]
                 
                 # Get vector from Data Frame column and calculate it's mean
-                MeanS[i] <- mean(Poll2)
-                #MeanS[i] <- mean( CleanData[[pollutant]] )
+                #MeanS[i] <- mean(Poll2)
+                MeanS[i] <- mean( CleanData[[pollutant]] )
                 #print(MeanS[i])
         }
         
