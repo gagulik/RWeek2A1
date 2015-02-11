@@ -13,34 +13,25 @@ pollutantmean <- function(directory, pollutant, id = 1:332) {
   ## in the 'id' vector (ignoring NA values)
         
         fExt  <- "csv"     # Data File extension
-        fNames <- sprintf("%03d",id) # add prepending zeroes to id to form file names
         
-        # Construct file path in a platform-indpendent manner
-        FullPathes <- file.path(directory, paste(fNames, fExt, sep="."), fsep = .Platform$file.sep)
-        
-        # Create vector of mean values for each monitor
-        MeanS <- numeric(length(FullPathes))
-
         # Enumerate through all files
-        for (i in seq_along(FullPathes)) {
-                DataFile <- FullPathes[i]
-                #print(DataFile)
-                Data <- read.csv(DataFile)
+        for (i in seq_along(id)) {
+                fName <- sprintf("%03d",id[i]) # add prepending zeroes to id to form file names
                 
-                # Filter-out NA values
-                Poll <- Data[[pollutant]] # get pollutant as vector
-                Poll2 <- Poll[!is.na(Poll)] # remove NA values
-#                CleanData <- Data[!is.na(Data[pollutant]),]
-                CleanData <- Data[!is.na(Data["sulfate"]),]
-                CleanData <- CleanData[!is.na(CleanData["nitrate"]),]
+                # Construct file path in a platform-indpendent manner
+                FullPath <- file.path(directory, paste(fName, fExt, sep="."), fsep = .Platform$file.sep)
                 
+                Data <- read.csv(FullPath)
                 # Get vector from Data Frame column and calculate it's mean
-                #MeanS[i] <- mean(Poll2)
-                MeanS[i] <- mean( CleanData[[pollutant]] )
-                #print(MeanS[i])
+#                MeanS[i] <- mean( Data[,pollutant], na.rm=TRUE )
+                d2<-Data[!is.na(Data[pollutant]),]
+                if (i>1) {
+                        d3 <- rbind(d3,d2)
+                } else {
+                        d3 <- d2
+                }
         }
         
         # Return value -  mean of means
-        FinalMean <- mean(MeanS)
-        FinalMean
+        mean( d3[,pollutant], na.rm=TRUE )
 }
